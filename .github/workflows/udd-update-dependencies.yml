@@ -2,8 +2,6 @@ name: udd-update-dependencies
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 1"
 
 jobs:
   update-dependencies:
@@ -30,7 +28,7 @@ jobs:
       - name: Retrieve commit sha
         id: commit
         run: |
-          echo "::set-output name=sha::$(git rev-parse HEAD)"
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
       - name: Set commit status with pending
         uses: Sibz/github-status-action@v1
         with:
@@ -51,3 +49,6 @@ jobs:
           description: "To run other CI actions close/reopen this PR"
           state: ${{ steps.test.outcome }}
           sha: ${{ steps.commit.outputs.sha }}
+      - name: Retrieve PR number
+        id: pr_num
+        run: echo "::notice ::PR_NUM=${{ env.PULL_REQUEST_NUMBER }}"
